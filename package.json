@@ -1,0 +1,21 @@
+{
+  "name": "parrot-jumping-sumo-project",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.17.2",
+    "express": "^4.15.3",
+    "jsmpeg": "^1.0.0",
+    "node-sumo": "git+https://github.com/forgeByAcision/node-sumo.git",
+    "python-shell": "^0.4.0",
+    "request": "^2.81.0",
+    "sharp": "^0.18.1",
+    "ws": "^3.0.0"
+  }
+}

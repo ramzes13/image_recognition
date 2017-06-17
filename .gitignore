@@ -1,0 +1,4 @@
+*.jpg
+*.png
+*.pyc
+node_modules

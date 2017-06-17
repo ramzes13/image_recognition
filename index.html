@@ -1,0 +1,141 @@
+<html>
+<head>
+    <title>Drone </title>
+</head>
+
+<body>
+<style>
+    table {
+        text-align: center;
+        width:100%;
+    }
+    .buttons {
+        white-space: pre;
+        display: block;
+        text-align: center;
+    }
+
+    button {
+        width: 200px;
+        padding: 10px;
+        margin: 5px;
+    }
+
+    body {
+        background: #333;
+        text-align: center;
+        margin: 0 0 0 0;
+    }
+
+    #videoCanvas {
+        width: 640px;
+        height: 480px;
+    }
+
+</style>
+<script>
+    function send(action, param) {
+        var xhttp = new XMLHttpRequest();
+        var host = location.origin + '/';
+
+        xhttp.open("GET", host + action + '?type=' + param, false);
+        xhttp.setRequestHeader("Content-type", "application/json");
+        xhttp.send();
+        var response = JSON.parse(xhttp.responseText);
+    }
+
+    // Setup the WebSocket connection and start the player
+    // var client = new WebSocket('ws://127.0.0.1:8084/');
+    // client.onmessage = function onmessage(event) {
+    //     console.log(event);
+    //     if (event.data.size === undefined) {
+    //         var canvas = document.getElementById('videoCanvas');
+    //         var context = canvas.getContext('2d');
+    //         var imageObj = new Image();
+    //         imageObj.onload = function () {
+    //             context.drawImage(imageObj, 0, 0, 640, 480);
+    //         };
+    //         imageObj.src = event.data;
+    //     }
+    // }
+
+    document.addEventListener('keydown', function (e) {
+        var keyCode = e.keyCode || e.which,
+            arrow = {left: 37, up: 38, right: 39, down: 40, jump: 32, stop: 16};
+
+        switch (keyCode) {
+            case arrow.left:
+                console.log("LEFT");
+                send('left');
+                break;
+            case arrow.up:
+                console.log("UP");
+                send('up');
+                break;
+            case arrow.right:
+                console.log("RIGHT");
+                send('right');
+                break;
+            case arrow.down:
+                console.log("DOWN");
+                send('down');
+                break;
+            case arrow.jump:
+                console.log("JUMP");
+                send('jump');
+                break;
+            case arrow.stop:
+                console.log("STOP");
+                send('stop');
+                break;
+        }
+    });
+</script>
+
+<canvas id="videoCanvas" width="640" height="480"></canvas>
+
+<div class="buttons">
+    <table>
+        <tr>
+            <td>
+                <button type="submit" onclick="send('up')">Forward</button>
+            </td>
+            <td>
+                <button type="submit" onclick="send('down')">Backward</button>
+            </td>
+            <td>
+                <button type="submit" onclick="send('left')">Left</button>
+            </td>
+            <td>
+                <button type="submit" onclick="send('right')">Right</button>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <button type="submit" onclick="send('stop')">Stop</button>
+            </td>
+            <td>
+                <button type="submit" onclick="send('perform-action','animationsStop')">Stop animations</button>
+            </td>
+            <td>
+                <button type="submit" onclick="send('jump')">Long Jump</button>
+            </td>
+            <td>
+                <button type="submit" onclick="send('highjump')">High Jump</button>
+            </td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>
+                <button type="submit" onclick="send('perform-action','postureStanding')">Posture Standing</button>
+            </td>
+            <td>
+                <button type="submit" onclick="send('perform-action','postureKicker')">Posture Kicker</button>
+            </td>
+            <td></td>
+            <td></td>
+        </tr>
+    </table>
+</div>
+</body>
+</html>
