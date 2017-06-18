@@ -6,7 +6,7 @@ var path = __dirname + '/';
 var PythonShell = require('python-shell');
 
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json({limit: '50mb'}));
+app.use(bodyParser.json({ limit: '50mb' }));
 
 var port = process.env.PORT || 3000;        // set our port
 
@@ -15,12 +15,15 @@ var router = express.Router();              // get an instance of the express Ro
 function treatImage(filename, callback) {
     console.log(filename);
     var options = {
-        args: ['-i', 'test']
+        args: ['-i', filename]
     };
 
     PythonShell.run('main.py', options, function (err, results) {
-        if (err) throw err;
-        console.log(results);
+        if (err) {
+            console.warn(err);
+            return;
+        }
+
         callback(null, results[0], results[1]);
     });
 }

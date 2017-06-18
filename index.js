@@ -6,7 +6,8 @@ var express = require('express');        // call express
 var app = express();                 // define our app using express
 var bodyParser = require('body-parser');
 var path = __dirname + '/';
-
+var KalmanFilter = require('kalmanjs').default; 
+var kalmanFilter = new KalmanFilter({R: 0.01, Q: 3});
 const WebSocket = require('ws');
 
 
@@ -99,11 +100,11 @@ function goBackward() {
 }
 
 function goLeft() {
-    drone.left(10);
+    drone.left(2);
 }
 
 function goRight() {
-    drone.right(10);
+    drone.right(2);
 }
 
 eventEmitter.on('goForward', goForward);
@@ -111,33 +112,60 @@ eventEmitter.on('goBackward', goBackward);
 eventEmitter.on('goLeft', goLeft);
 eventEmitter.on('goRight', goRight);
 
+var deltaError = 20;
+
 //Another functions
 function saveVideo(bufferData) {
 
     var timestamp = Math.round(new Date().getTime() / 1000);
     var fileName = 'output/output' + timestamp + '.jpg';
     // console.log(fileName);
-    // sharp(bufferData)
-    // .resize(320, 240)
-    // .toFile(fileName, function (error, info) {
-    //     request.post({
-    //         headers: { 'content-type': 'application/x-www-form-urlencoded' },
-    //         url: 'http://127.0.0.2:3000/',
-    //         body: "file=" + fileName
-    //     }, function (error, response, body) {
-    //         console.log(body);
-    //         console.log('post response');
-    //     });
-    // });
-    request.post({
-        headers: { 'content-type': 'application/x-www-form-urlencoded' },
-        url: 'http://127.0.0.2:3000/',
-        body: "file=" + bufferData
-    }, function (error, response, body) {
-        console.log(body);
-        console.log('post response');
-    });
+    sharp(bufferData)
+        // .resize(320, 240)
+        .toFile(fileName, function (error, info) {
+            request.post({
+                headers: { 'content-type': 'application/x-www-form-urlencoded' },
+                url: 'http://127.0.0.2:3000/',
+                body: "file=" + fileName
+            }, function (error, response, body) {
+                console.log(body);
+                console.log('post response');
+                makeAStep(JSON.parse(body), info);
+
+            });
+        });
 }
+
+function makeAStep(coordinates, pictureInfo) {
+    var x = parseInt(coordinates.x);
+    var y = parseInt(coordinates.y);
+
+    if(x > 0 && y > 0) {
+        var x = kalmanFilter.filter(x);
+
+        var halfImageWidth = pictureInfo.width / 2;
+        var diff = halfImageWidth - x;
+
+        if( Math.abs(diff) < deltaError ) {
+            console.log('Good way');
+            goForward();
+            return;
+        } else if(diff > 0){
+            console.log('Left Turn')
+            goLeft();
+            //todo turn left
+        } else {
+            console.log('Right Turn');
+            goRight();
+        }
+    } else {
+        console.log(coordinates['x']);
+        console.warn('not calculated', x, y);
+    }
+
+}
+
+
 
 
 // ROUTES FOR OUR API

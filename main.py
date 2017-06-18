@@ -11,6 +11,7 @@ args = vars(ap.parse_args())
 
 # load the image
 image = cv2.imread(args["image"])
+# image = cv2.imdecode(args["image"])
 rspX = 0
 rspY = 0
 
