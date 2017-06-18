@@ -6,8 +6,8 @@ var express = require('express');        // call express
 var app = express();                 // define our app using express
 var bodyParser = require('body-parser');
 var path = __dirname + '/';
-var KalmanFilter = require('kalmanjs').default; 
-var kalmanFilter = new KalmanFilter({R: 0.01, Q: 3});
+var KalmanFilter = require('kalmanjs').default;
+var kalmanFilter = new KalmanFilter({ R: 0.01, Q: 3 });
 const WebSocket = require('ws');
 
 
@@ -128,8 +128,6 @@ function saveVideo(bufferData) {
                 url: 'http://127.0.0.2:3000/',
                 body: "file=" + fileName
             }, function (error, response, body) {
-                console.log(body);
-                console.log('post response');
                 makeAStep(JSON.parse(body), info);
 
             });
@@ -139,21 +137,21 @@ function saveVideo(bufferData) {
 function makeAStep(coordinates, pictureInfo) {
     var x = parseInt(coordinates.x);
     var y = parseInt(coordinates.y);
-    var area = parseFloat(coordinates.area);
+    var area = parseInt(coordinates.area);
 
     console.log(area);
-    if(x > 0 && y > 0) {
+    if (x > 0 && y > 0) {
 
         var x = kalmanFilter.filter(x);
 
         var halfImageWidth = pictureInfo.width / 2;
         var diff = halfImageWidth - x;
 
-        if( Math.abs(diff) < deltaError ) {
+        if (Math.abs(diff) < deltaError) {
             console.log('Good way');
             goForward();
             return;
-        } else if(diff > 0){
+        } else if (diff > 0) {
             console.log('Left Turn')
             goLeft();
             //todo turn left

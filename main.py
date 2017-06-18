@@ -14,16 +14,12 @@ args = vars(ap.parse_args())
 
 # load the image
 image = cv2.imread(args["image"])
-# image = cv2.imdecode(args["image"])
+
 rspX = 0
 rspY = 0
+biggestArea = 0
 
 if not image is None: 
-	height, width = image.shape[:2]
-
-	# print width
-	# print height
-
 	blurred = cv2.GaussianBlur(image, (5, 5), 0)
 
 	# ratio = image.shape[0] / float(resized.shape[0])
@@ -40,8 +36,7 @@ if not image is None:
 	mask = cv2.inRange(blurred, lower, upper)
 	output = cv2.bitwise_and(blurred, blurred, mask = mask)
 
-	cv2.imwrite(args["image"], np.hstack([blurred, output]))
-	# cv2.imwrite('tmp_2_original.jpg', output)
+	cv2.imwrite(args["image"] + '_debug.jpg', np.hstack([blurred, output]))
 
 	# find contours in the thresholded image and initialize the
 	# shape detector
@@ -72,3 +67,5 @@ if not image is None:
 print rspX
 print rspY
 print biggestArea
+
+logging.debug('area: ' + str(biggestArea))
