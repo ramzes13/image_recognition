@@ -24,7 +24,7 @@ function treatImage(filename, callback) {
             return;
         }
 
-        callback(null, results[0], results[1]);
+        callback(null, results[0], results[1], results[2]);
     });
 }
 // test route to make sure everything is working (accessed at GET http://localhost:8080/api)
@@ -32,18 +32,16 @@ router.post('*', function (req, res) {
     var fileName = req.body.file;
     var response = {};
 
-    // setTimeout(function () {
-    treatImage(fileName, function (error, x, y) {
+    treatImage(fileName, function (error, x, y, area) {
         if (!error) {
-            response = { x: x, y: y };
+            response = { x: x, y: y, area: area };
         } else {
-            response = { 'message aaaaaaaaa': 'error' };
+            response = { 'message': 'error' };
         }
         response.fileName = fileName;
 
         res.json(response);
     });
-    // }, 100)
 });
 
 app.use('/', router);

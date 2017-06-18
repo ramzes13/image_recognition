@@ -4,6 +4,9 @@ import argparse
 import imutils
 import cv2
 
+import logging
+logging.basicConfig(filename='debug_python.log',level=logging.DEBUG)
+
 # construct the argument parse and parse the arguments
 ap = argparse.ArgumentParser()
 ap.add_argument("-i", "--image", help = "path to the image")
@@ -37,8 +40,8 @@ if not image is None:
 	mask = cv2.inRange(blurred, lower, upper)
 	output = cv2.bitwise_and(blurred, blurred, mask = mask)
 
-	cv2.imwrite('tmp_2.jpg', np.hstack([blurred, output]))
-	cv2.imwrite('tmp_2_original.jpg', output)
+	cv2.imwrite(args["image"], np.hstack([blurred, output]))
+	# cv2.imwrite('tmp_2_original.jpg', output)
 
 	# find contours in the thresholded image and initialize the
 	# shape detector
@@ -48,6 +51,8 @@ if not image is None:
 	cnts = cnts[0] if imutils.is_cv2() else cnts[1]
 
 	biggestArea = 0
+
+	logging.debug('nr shapes: ' + str(len(cnts)))
 
 	for c in cnts:
 		# compute the center of the contour, then detect the name of the
@@ -66,3 +71,4 @@ if not image is None:
 	# print biggestArea
 print rspX
 print rspY
+print biggestArea

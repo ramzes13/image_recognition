@@ -139,8 +139,11 @@ function saveVideo(bufferData) {
 function makeAStep(coordinates, pictureInfo) {
     var x = parseInt(coordinates.x);
     var y = parseInt(coordinates.y);
+    var area = parseFloat(coordinates.area);
 
+    console.log(area);
     if(x > 0 && y > 0) {
+
         var x = kalmanFilter.filter(x);
 
         var halfImageWidth = pictureInfo.width / 2;
